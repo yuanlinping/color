@@ -24,8 +24,10 @@ class Model(object):
 		self.loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=labels, name='bce')) # normal bce loss		
 
 		# create train op
-		self.optim = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(self.loss, colocate_gradients_with_ops=True) # gradient ops assign to same device as forward ops
-
+        update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+        with tf.control_dependencies(control_inputs = update_ops):
+				self.optim = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(self.loss, colocate_gradients_with_ops=True) # gradient ops assign to same device as forward ops
+		
 		# collect summaries
 		tf.summary.image('input', images)
 		tf.summary.image('label', labels)
@@ -94,11 +96,12 @@ class Model(object):
 		Use both inference and offline evaluation
 		"""
 		self.x = tf.placeholder(shape=shape, dtype=tf.float32)
-		logits, _ = cnn(self.x)
+		self.is_training = tf.placeholder(tf.bool)
+		logits, _ = cnn(self.x,self.is_training)
 		self.infer = tf.nn.sigmoid(logits)
 
 	def inference(self, image, sess):
 		im = np.reshape(image, (1, 512, 1024, 3))
 		
-		pred = sess.run([self.infer], feed_dict={self.x:im})
+		pred = sess.run([self.infer], feed_dict={self.x:im,self.is_training:False})
 		return np.squeeze(pred)

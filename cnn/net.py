@@ -4,11 +4,13 @@ import tensorflow.contrib.slim as slim
 from tensorflow.contrib.layers.python.layers import utils
 
 
-def cnn(inputs):
+def cnn(inputs,is_training = True):
 	with tf.variable_scope('feature_net') as sc:						  # design the nn architecture for the depth network
 		end_points_collection = sc.original_name_scope + '_end_points'
+		batch_norm_params = {'is_training': is_training, 'decay': 0.9, 'updates_collections': None}
 		with slim.arg_scope([slim.conv2d, slim.conv2d_transpose],	   #define a conv2d operator with fixed params shown below
-							normalizer_fn=None,
+							normalizer_fn=slim.batch_norm,
+                            normalizer_params=batch_norm_params,							
 							weights_regularizer=slim.l2_regularizer(0.05), # using l2 regularizer with 0.05 weight
 							activation_fn=tf.nn.relu,
 							outputs_collections=end_points_collection):
