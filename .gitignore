@@ -3,6 +3,6 @@ dataset/*
 tmp/*
 cnn/LOG
 gan/LOG
-idea/*
+.idea/*
 # compiled python file
 *.pyc
