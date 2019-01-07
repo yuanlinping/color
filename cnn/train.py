@@ -1,4 +1,6 @@
 from model import *
+import os
+import numpy as np
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
