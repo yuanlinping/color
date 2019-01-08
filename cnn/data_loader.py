@@ -13,8 +13,8 @@ import time
 
 import random
 
-# train_file = '../dataset/train.txt'
-# test_file = '../dataset/test.txt'
+train_file = '../dataset/train.txt'
+test_file = '../dataset/test.txt'
 
 train_label = "../dataset/labelFromJS.csv"
 train_feature = "../dataset/chart.csv"
@@ -49,8 +49,6 @@ def data_loader(batch_size=1,type="train",resize=None):
 	num_batch = len(feature) // batch_size
 
 	return {'images': images, 'labels': labels, 'num_batch': num_batch}
-
-
 
 # def data_loader(batch_size=1, file=train_file, resize=None):
 # 	"""

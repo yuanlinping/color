@@ -5,6 +5,7 @@ from net import *
 seed = 8964
 tf.set_random_seed(seed)
 
+
 class Model(object):
 	"""docstring for Baseline"""
 	def __init__(self):
