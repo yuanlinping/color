@@ -34,7 +34,7 @@ class Model(object):
 
 		return data_dict['num_batch']
 
-	def train(self, max_step=40000):
+	def train(self, max_step=20000):
 		# build train graph
 		num_batch = self.build_train_graph()
 

@@ -5,6 +5,7 @@ from tensorflow.contrib.layers.python.layers import utils
 
 
 def cnn(inputs):
+	print(inputs)
 	with tf.variable_scope('feature_net') as sc:						  # design the nn architecture for the depth network
 		end_points_collection = sc.original_name_scope + '_end_points'
 		with slim.arg_scope([slim.conv2d, slim.conv2d_transpose],	   #define a conv2d operator with fixed params shown below
@@ -31,8 +32,11 @@ def cnn(inputs):
 				legend_pred = slim.conv2d(cnv6b, 3, [1, 1], stride=1, scope='pred',
 					normalizer_fn=None, activation_fn=None)
 
-				legend_pred_resize = tf.image.resize_images(legend_pred, [40, 1024])
+				legend_pred_resize = tf.image.resize_images(legend_pred, [4, 15])
 
+			# legend_pred_resize = legend_pred.reshape(4, 15, 1)
+			print(legend_pred_resize)
+			print(legend_pred)
 			end_points = utils.convert_collection_to_dict(end_points_collection)
 			return legend_pred_resize, end_points
 
