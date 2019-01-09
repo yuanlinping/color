@@ -21,34 +21,70 @@ train_feature = "../dataset/chart.csv"
 # train_label = "../dataset/label.csv"
 # train_feature = "../dataset/example.csv"
 
+# method 1: directly generate data from csv
+# def unison_shuffled_copies(a, b):
+# 	assert len(a) == len(b)
+# 	p = np.random.permutation(len(a))
+# 	return a[p], b[p]
 
-def unison_shuffled_copies(a, b):
-	assert len(a) == len(b)
-	p = np.random.permutation(len(a))
-	return a[p], b[p]
+
+# def data_loader(batch_size=1,type="train", resize=None):
+# 	label = []
+# 	feature = []
+#
+# 	if(type=="train"):
+# 		label = np.genfromtxt(train_label, delimiter=",", max_rows=4)
+# 		feature = np.genfromtxt(train_feature, delimiter=",", max_rows=4)
+#
+# 	label, feature = unison_shuffled_copies(label, feature)
+#
+# 	label = label.reshape(len(label), 4, 15, 1)
+# 	feature = feature.reshape(len(feature), 1 << 7, 1 << 8, 1)
+#
+# 	labels = tf.convert_to_tensor(label, dtype=tf.float32)
+# 	images = tf.convert_to_tensor(feature, dtype=tf.float32)
+#
+# 	# number of batches
+# 	num_batch = len(feature) // batch_size
+# 	return {'images': images, 'labels': labels, 'num_batch': num_batch}
 
 
-def data_loader(batch_size=1,type="train",resize=None):
-	label = []
-	feature = []
-
-	if(type=="train"):
-		label = np.genfromtxt(train_label, delimiter=",")
-		feature = np.genfromtxt(train_feature, delimiter=",")
-
-	label, feature = unison_shuffled_copies(label, feature)
-
+# method 2: queueRunner
+def read_data_from_csv(label_file,feature_file):
+	label = np.genfromtxt(label_file, delimiter=",")
+	feature = np.genfromtxt(feature_file, delimiter=",")
 	label = label.reshape(len(label), 4, 15, 1)
 	feature = feature.reshape(len(feature), 1 << 7, 1 << 8, 1)
-
 	labels = tf.convert_to_tensor(label, dtype=tf.float32)
 	images = tf.convert_to_tensor(feature, dtype=tf.float32)
 
+	return labels, images, len(feature)
+
+
+def data_loader(batch_size=1, resize=None):
+	"""
+	Read pair of training set
+	Use fixed input size: [512x1024x3], gt size: [40x1024x3]
+	"""
+
+	# label image
+	lab_list, img_list, exampleLen = read_data_from_csv(train_label, train_feature)
+
+	# create data queue
+	data_queue = tf.train.slice_input_producer([img_list, lab_list],
+		shuffle=True, capacity=batch_size*128)
+
+	# create batch data
+	images, labels = tf.train.batch(data_queue,
+		batch_size=batch_size, num_threads=1,
+		capacity=batch_size*128)
 
 	# number of batches
-	num_batch = len(feature) // batch_size
+	num_batch = exampleLen // batch_size
 
-	return {'images': images, 'labels': labels, 'num_batch': num_batch}
+
+	return {'images':images, 'labels':labels, 'num_batch':num_batch}
+
 
 # def data_loader(batch_size=1, file=train_file, resize=None):
 # 	"""
