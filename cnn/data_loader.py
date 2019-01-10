@@ -18,6 +18,7 @@ test_file = '../dataset/test.txt'
 
 train_label = "../dataset/labelFromJS.csv"
 train_feature = "../dataset/chart.csv"
+
 # train_label = "../dataset/label.csv"
 # train_feature = "../dataset/example.csv"
 
@@ -58,34 +59,85 @@ def read_data_from_csv(label_file,feature_file):
 	labels = tf.convert_to_tensor(label, dtype=tf.float32)
 	images = tf.convert_to_tensor(feature, dtype=tf.float32)
 
+	print len(feature)
+
 	return labels, images, len(feature)
 
 
-def data_loader(batch_size=1, resize=None):
-	"""
-	Read pair of training set
-	Use fixed input size: [512x1024x3], gt size: [40x1024x3]
-	"""
+# def data_loader(batch_size=1, resize=None):
+#
+# 	# label image
+# 	lab_list, img_list, exampleLen = read_data_from_csv(train_label, train_feature)
+#
+# 	# create data queue
+# 	data_queue = tf.train.slice_input_producer([img_list, lab_list],
+# 	shuffle=True, capacity=batch_size*128)
+#
+# 	# create batch data
+# 	images, labels = tf.train.batch(data_queue,
+# 	batch_size=batch_size, num_threads=1,
+# 	capacity=batch_size*128)
+#
+# 	# number of batches
+# 	num_batch = exampleLen // batch_size
+#
+# 	return {'images':images, 'labels':labels, 'num_batch':num_batch}
 
-	# label image
-	lab_list, img_list, exampleLen = read_data_from_csv(train_label, train_feature)
+
+
+
+# method 2  --> new image + old label(.png)
+def data_loader(batch_size=1, file=train_file, resize=None):
+
+	paths = open(train_file, 'r').read().splitlines()
+
+	label_paths = [p.split('\t')[1] for p in paths]
+
+	# create batch input
+	# convert to tensor list
+	lab_list = tf.convert_to_tensor(label_paths, dtype=tf.string)
+
+	wuyong_list, img_list, exampleLen = read_data_from_csv(train_label, train_feature)
+
 
 	# create data queue
-	data_queue = tf.train.slice_input_producer([img_list, lab_list],
-		shuffle=True, capacity=batch_size*128)
+	data_queue = tf.train.slice_input_producer([img_list, lab_list], shuffle=True, capacity=batch_size*128)
+
+	image = data_queue[0]
+	# decode image
+	label = tf.image.decode_png(tf.read_file(data_queue[1]), channels=3)
+
+	# resize to define image shape
+	if resize is None:
+		label = tf.reshape(label, [40, 1024, 3])
+	else:
+		label = tf.image.resize_images(label, resize)
+
+	# convert to float data type
+	label = tf.cast(label, dtype=tf.float32)
+
+	# data pre-processing, normalize
+	label = tf.divide(label, tf.constant(255.0))
+
 
 	# create batch data
-	images, labels = tf.train.batch(data_queue,
-		batch_size=batch_size, num_threads=1,
+
+	# images, labels = tf.train.shuffle_batch([image, label],
+	# 		batch_size=batch_size, num_threads=1,
+	# 		capacity=batch_size*128, min_after_dequeue=batch_size*32)
+
+	images, labels = tf.train.batch([image, label],
+		batch_size=batch_size, num_threads=4,
 		capacity=batch_size*128)
 
 	# number of batches
 	num_batch = exampleLen // batch_size
 
-
 	return {'images':images, 'labels':labels, 'num_batch':num_batch}
+# 	# return
 
 
+# original
 # def data_loader(batch_size=1, file=train_file, resize=None):
 # 	"""
 # 	Read pair of training set
