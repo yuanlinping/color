@@ -2,7 +2,7 @@ import numpy as np
 
 import tensorflow as tf
 
-import cv2
+# import cv2
 
 from scipy.misc import imread, imsave, imresize
 
@@ -15,59 +15,44 @@ import random
 train_file = '../dataset/train.txt'
 test_file = '../dataset/test.txt'
 
-def data_loader(batch_size=1, file=train_file, resize=None):
-	"""
-	Read pair of training set
-	Use fixed input size: [512x1024x3], gt size: [40x1024x3]
-	"""
-	paths = open(file, 'r').read().splitlines()
+image_height = 128
+image_width = 256
 
-	random.shuffle(paths)
 
-	image_paths = [p.split('\t')[0] for p in paths]
-	label_paths = [p.split('\t')[1] for p in paths]
+def get_file_paths (batch_size, file=train_file):
+    paths = open(file, 'r').read().splitlines()
 
-	# create batch input
-	# convert to tensor list
-	img_list  = tf.convert_to_tensor(image_paths, dtype=tf.string)
-	lab_list = tf.convert_to_tensor(label_paths, dtype=tf.string)
+    random.shuffle(paths)
 
-	# create data queue
-	data_queue = tf.train.slice_input_producer([img_list, lab_list], 
-		shuffle=False, capacity=batch_size*128)
+    image_paths = [p.split('\t')[0] for p in paths]
+    label_paths = [p.split('\t')[1] for p in paths]
 
-	# decode image
-	image = tf.image.decode_png(tf.read_file(data_queue[0]), channels=3)
-	label = tf.image.decode_png(tf.read_file(data_queue[1]), channels=3)
+    num_batch = len(image_paths) // batch_size
 
-	# resize to define image shape
-	if resize is None:
-		image = tf.reshape(image, [512, 1024, 3])
-		label = tf.reshape(label, [40, 1024, 3])
-	else:
-		image = tf.image.resize_images(image, resize)
-		label = tf.image.resize_images(label, resize)
+    return {"image_paths": image_paths, "label_paths": label_paths, "num_batch": num_batch}
 
-	# convert to float data type
-	image = tf.cast(image, dtype=tf.float32)	
-	label  = tf.cast(label, dtype=tf.float32)
 
-	# data pre-processing, normalize
-	image = tf.divide(image, tf.constant(255.0))
-	label = tf.divide(label, tf.constant(255.0))
+def image_data_loader(start_index, batch_size, file_paths):
+    images = np.zeros((batch_size, image_height, image_width, 1), dtype=np.float32)
+    for i in range(batch_size):
+        file_path = file_paths[i + start_index]
+        feature = np.genfromtxt(file_path, delimiter=",")
+        feature = feature.reshape(image_height, image_width, 1)
+        images[i] = feature
+    # print images.shape
+    return images
 
-	# one-hot label, convert to one-hot label during loss computation
-	# label = 
 
-	# create batch data
-	images, labels = tf.train.shuffle_batch([image, label],
-		batch_size=batch_size, num_threads=1, 
-		capacity=batch_size*128, min_after_dequeue=batch_size*32) 
+def label_data_loader(start_index, batch_size, file_paths):
+    labels = np.zeros((batch_size, 40, 1024, 3), dtype=np.float32)
+    for i in range(batch_size):
+        file_path = file_paths[i + start_index]
+        lab = imread(file_path, mode='RGB') / 255.
+        label = np.reshape(lab, (40, 1024, 3))
+        labels[i] = label
+    # print labels.shape
+    return labels
 
-	# number of batches
-	num_batch = len(image_paths) // batch_size	
-
-	return {'images':images, 'labels':labels, 'num_batch':num_batch}
 
 # Unit test
 # if __name__ == '__main__':

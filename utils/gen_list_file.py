@@ -6,31 +6,30 @@ import glob
 import time
 
 from scipy.misc import imread
+import random
 
 # train file
-data_dir = '../dataset/stackedBar_40/chart'
-label_dir = '../dataset/stackedBar_40/legend'
+data_dir = '../dataset/chartHis_32/'
+label_dir = '../dataset/legend/'
 
-im_paths = sorted(glob.glob(os.path.join(data_dir, '*.png')))
-gt_paths = sorted(glob.glob(os.path.join(label_dir, '*.png')))
+num_sample = 320
+index_array = range(num_sample)
 
-assert len(im_paths) == len(gt_paths)
+random.shuffle(index_array)
 
-train = open('../dataset/stackedBar_40/train.txt', 'w')
-for i in range(len(im_paths)):
-	print>>train, '{}\t{}'.format(im_paths[i],gt_paths[i])
+train = open('../dataset/train.txt', 'w')
+for i in range(300):
+	index = index_array[i] + 1
+	im_paths = data_dir+"C" + str(index) + ".csv"
+	gt_paths = label_dir+"L" + str(index) + ".png"
+	print>> train, '{}\t{}'.format(im_paths, gt_paths)
 train.close()
 
-# test file
-test_data_dir = '../dataset/stackedBar_40/test_chart'
-test_label_dir = '../dataset/stackedBar_40/test_legend'
-
-im_paths = sorted(glob.glob(os.path.join(test_data_dir, '*.png')))
-gt_paths = sorted(glob.glob(os.path.join(test_label_dir, '*.png')))
-
-assert len(im_paths) == len(gt_paths)
-
-test = open('../dataset/stackedBar_40/test.txt', 'w')
-for i in range(len(im_paths)):
-	print>>test, '{}\t{}'.format(im_paths[i],gt_paths[i])
+test = open('../dataset/test.txt', 'w')
+for i in range(20):
+	index = index_array[i+300] + 1
+	im_paths = data_dir+"C" + str(index) + ".csv"
+	gt_paths = label_dir+"L" + str(index) + ".png"
+	print>> test, '{}\t{}'.format(im_paths, gt_paths)
 test.close()
+

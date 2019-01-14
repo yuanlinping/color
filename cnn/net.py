@@ -36,10 +36,10 @@ def cnn(inputs):
 			end_points = utils.convert_collection_to_dict(end_points_collection)
 			return legend_pred_resize, end_points
 
-# unit test of the tensor shape at each layer
+# # unit test of the tensor shape at each layer
 # if __name__ == '__main__':
-# 	logits, end_points = cnn(tf.placeholder(shape=[1,512,1024,3], dtype=tf.float32))
-
+# 	logits, end_points = cnn(tf.placeholder(shape=[1, 128, 256, 3], dtype=tf.float32))
+#
 # 	keys = end_points.keys()
 # 	for k in keys:
 # 		print 'tensor name = {}, shape = {}'.format(k, end_points[k].shape)

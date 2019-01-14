@@ -5,6 +5,8 @@ from net import *
 seed = 8964
 tf.set_random_seed(seed)
 
+batch_size = 1
+
 class Model(object):
 	"""docstring for Baseline"""
 	def __init__(self):
@@ -13,30 +15,40 @@ class Model(object):
 	def build_train_graph(self):
 
 		# get inputs
-		data_dict = data_loader(batch_size=1)
-		images = data_dict['images']
-		labels = data_dict['labels']
+
+		file_paths = get_file_paths(batch_size= batch_size)
+
+		self.images = tf.placeholder(shape=[batch_size, image_height, image_width, 1], dtype=tf.float32)
+		self.labels = tf.placeholder(shape=[batch_size, 40, 1024, 3], dtype=tf.float32)
+
 
 		# initial network 
-		logits, _ = cnn(images)
+		logits, _ = cnn(self.images)
 
 		# compute loss 
-		self.loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=labels, name='bce')) # normal bce loss		
+		self.loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=self.labels, name='bce')) # normal bce loss
 
 		# create train op
-		self.optim = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(self.loss, colocate_gradients_with_ops=True) # gradient ops assign to same device as forward ops
+		self.optim = tf.train.AdamOptimizer(learning_rate=1e-6).minimize(self.loss, colocate_gradients_with_ops=True) # gradient ops assign to same device as forward ops
 
 		# collect summaries
-		tf.summary.image('input', images)
-		tf.summary.image('label', labels)
+		tf.summary.histogram('input', self.images)
+		tf.summary.image('label', self.labels)
 		tf.summary.image('predict', tf.nn.sigmoid(logits)) 	
 		tf.summary.scalar('bce', self.loss)		
 
-		return data_dict['num_batch']
+		return {"image_paths": file_paths["image_paths"], "label_paths": file_paths["label_paths"], "num_batch": file_paths['num_batch']}
 
 	def train(self, max_step=40000):
 		# build train graph
-		num_batch = self.build_train_graph()
+		results = self.build_train_graph()
+		image_paths = results["image_paths"]
+		label_paths = results["label_paths"]
+		num_batch = results["num_batch"]
+
+		# print image_paths
+		# print label_paths
+		# print num_batch
 
 		max_ep = max_step // num_batch
 
@@ -68,13 +80,17 @@ class Model(object):
 			for ep in xrange(max_ep): # epoch loop
 				for n in xrange(num_batch): # batch loop
 					tic = time.time()
-					[loss_value, update_value, summaries] = sess.run([self.loss, self.optim, merged])	
+					images = image_data_loader(n * batch_size, batch_size, image_paths)
+					labels = label_data_loader(n * batch_size, batch_size, label_paths)
+					# print images
+					# print labels
+					[loss_value, update_value, summaries] = sess.run([self.loss, self.optim, merged], feed_dict={self.images: images, self.labels: labels})
 					duration = time.time()-tic
 
 					total_times += duration
 
 					step = int(ep*num_batch + n)
-					# write log 
+					# write log
 					print 'step {}: loss = {:.3}; {:.2} data/sec, excuted {} minutes'.format(step,
 						loss_value, 1.0/duration, int(total_times/60))
 					if ep % 5 == 0:
@@ -86,10 +102,10 @@ class Model(object):
 
 			# close session
 			coord.request_stop()
-			coord.join(threads)			
-			sess.close()	
+			coord.join(threads)
+			sess.close()
 
-	def setup_inference(self, shape=[1,512,1024,3]):
+	def setup_inference(self, shape=[1, image_height, image_width, 1]):
 		"""
 		Use both inference and offline evaluation
 		"""
@@ -98,7 +114,7 @@ class Model(object):
 		self.infer = tf.nn.sigmoid(logits)
 
 	def inference(self, image, sess):
-		im = np.reshape(image, (1, 512, 1024, 3))
+		im = np.reshape(image, (1, image_height, image_width, 1))
 		
 		pred = sess.run([self.infer], feed_dict={self.x:im})
 		return np.squeeze(pred)
