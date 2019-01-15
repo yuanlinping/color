@@ -2,8 +2,6 @@ import numpy as np
 
 import tensorflow as tf
 
-import cv2
-
 from scipy.misc import imread, imsave, imresize
 
 import os

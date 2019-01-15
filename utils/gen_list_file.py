@@ -16,7 +16,9 @@ label_dir = '../dataset/legend/'
 im_paths = sorted(glob.glob(os.path.join(data_dir, '*.png')))
 gt_paths = sorted(glob.glob(os.path.join(label_dir, '*.png')))
 
-index_array = random.shuffle(range(len(im_paths)))
+index_array = range(len(im_paths))
+
+random.shuffle(index_array)
 
 train = open('../dataset/train.txt', 'w')
 for i in range(300):
