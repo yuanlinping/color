@@ -1,6 +1,9 @@
 from model import *
 
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib import pyplot as plt
+
 
 infer_dir = './vis'
 
@@ -34,7 +37,8 @@ def main(_):
 		# infer loop
 		n = len(im_paths)
 		for i in xrange(n):
-			im = imread(im_paths[i], mode='RGB') / 255.
+			# im = imread(im_paths[i], mode='RGB') / 255.
+			im = np.genfromtxt(im_paths[i], delimiter=",")
 			gt = imread(gt_paths[i], mode='RGB') / 255.
 
 			pred = model.inference(im, sess)
