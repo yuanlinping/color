@@ -21,7 +21,7 @@ index_array = range(len(im_paths))
 
 random.shuffle(index_array)
 
-start_point = 1921
+start_point = 3841
 range_1 = 864
 range_2 = len(im_paths) - range_1
 
