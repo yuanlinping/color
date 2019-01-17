@@ -28,10 +28,10 @@ def cnn(inputs):
 			with tf.variable_scope('fc'):
 				cnv6 = slim.conv2d(cnv5b, 512, [3, 3], stride=1, scope='cnv6')
 				cnv6b = slim.conv2d(cnv6, 512, [3, 3], stride=1, scope='cnv6b')
-				legend_pred = slim.conv2d(cnv6b, 3, [1, 1], stride=1, scope='pred',
+				legend_pred = slim.conv2d(cnv6b, 1, [1, 1], stride=1, scope='pred',
 					normalizer_fn=None, activation_fn=None)
 
-				legend_pred_resize = tf.image.resize_images(legend_pred, [40, 1024])
+				legend_pred_resize = tf.image.resize_images(legend_pred, [1, 60])
 
 			end_points = utils.convert_collection_to_dict(end_points_collection)
 			return legend_pred_resize, end_points
