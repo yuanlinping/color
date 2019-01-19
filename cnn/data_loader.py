@@ -13,6 +13,7 @@ import random
 train_file = '../dataset/train.txt'
 test_file = '../dataset/test.txt'
 
+
 def data_loader(batch_size=1, file=train_file, resize=None):
 	"""
 	Read pair of training set
@@ -27,7 +28,7 @@ def data_loader(batch_size=1, file=train_file, resize=None):
 
 	# create batch input
 	# convert to tensor list
-	img_list  = tf.convert_to_tensor(image_paths, dtype=tf.string)
+	img_list = tf.convert_to_tensor(image_paths, dtype=tf.string)
 	lab_list = tf.convert_to_tensor(label_paths, dtype=tf.string)
 
 	# create data queue
@@ -48,7 +49,7 @@ def data_loader(batch_size=1, file=train_file, resize=None):
 
 	# convert to float data type
 	image = tf.cast(image, dtype=tf.float32)	
-	label  = tf.cast(label, dtype=tf.float32)
+	label = tf.cast(label, dtype=tf.float32)
 
 	# data pre-processing, normalize
 	image = tf.divide(image, tf.constant(255.0))

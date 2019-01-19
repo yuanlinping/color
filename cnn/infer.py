@@ -75,19 +75,19 @@ def main(_):
 
 			accuracy_array.append(accuracy)
 
-			# plt.clf()
-			# plt.subplot(211)
-			# plt.imshow(pred)
-			# plt.axis('off')
-			# plt.title('predict')
-			# plt.subplot(212)
-			# plt.imshow(gt)
-			# plt.axis('off')
-			# plt.title('ground truth')
+			plt.clf()
+			plt.subplot(211)
+			plt.imshow(pred)
+			plt.axis('off')
+			plt.title('predict')
+			plt.subplot(212)
+			plt.imshow(gt)
+			plt.axis('off')
+			plt.title('ground truth')
 
 			print 'Saving to {}'.format(vis_paths[i])
 			# imsave(vis_paths[i], pred)
-			# plt.savefig(vis_paths[i])
+			plt.savefig(vis_paths[i])
 
 		print accuracy_array
 

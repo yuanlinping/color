@@ -18,11 +18,12 @@ im_paths = sorted(glob.glob(os.path.join(data_dir, '*.png')))
 gt_paths = sorted(glob.glob(os.path.join(label_dir, '*.png')))
 
 index_array = range(len(im_paths))
+print len(im_paths)
 
 random.shuffle(index_array)
 
-start_point = 3841
-range_1 = 864
+start_point = 6721
+range_1 = 648
 range_2 = len(im_paths) - range_1
 
 
