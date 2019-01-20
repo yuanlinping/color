@@ -51,7 +51,7 @@ def label_data_loader(start_index, batch_size, file_paths):
     labels = np.zeros((batch_size, label_height, label_width, label_channel), dtype=np.float32)
     for i in range(batch_size):
         file_path = file_paths[i + start_index]
-        lab = np.genfromtxt(file_path, delimiter=",")
+        lab = np.genfromtxt(file_path, delimiter=",") / 255.
         label = lab.reshape(label_height, label_width, label_channel)
         labels[i] = label
     return labels

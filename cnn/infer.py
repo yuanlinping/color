@@ -38,10 +38,12 @@ def main(_):
 		n = len(im_paths)
 		for i in xrange(n):
 			# im = imread(im_paths[i], mode='RGB') / 255.
-			im = np.genfromtxt(im_paths[i], delimiter=",")
-			gt = imread(gt_paths[i], mode='RGB') / 255.
+			im = imread(im_paths[i], mode='RGB') / 255.
+			gt = np.genfromtxt(gt_paths[i], delimiter=",") / 255.
 
 			pred = model.inference(im, sess)
+
+
 
 			plt.clf()
 			plt.subplot(211)
