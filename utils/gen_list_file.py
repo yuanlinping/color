@@ -12,14 +12,14 @@ import random
 data_dir = '../dataset/chart/'
 label_dir = '../dataset/labelHis/'
 
-num_sample = 320
+num_sample = 720
 index_array = range(num_sample)
 
 random.shuffle(index_array)
 
-range_1 = 300
+range_1 = 648
 range_2 = num_sample - range_1
-start_point = 1
+start_point = 6721
 
 train = open('../dataset/train.txt', 'w')
 for i in range(range_1):

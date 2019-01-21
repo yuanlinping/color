@@ -39,7 +39,7 @@ class Model(object):
 
 		return {"image_paths": file_paths["image_paths"], "label_paths": file_paths["label_paths"], "num_batch": file_paths['num_batch']}
 
-	def train(self, max_step=40000):
+	def train(self, max_step=20000):
 		# build train graph
 		results = self.build_train_graph()
 		image_paths = results["image_paths"]
