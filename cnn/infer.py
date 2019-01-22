@@ -4,7 +4,7 @@ import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
-
+test_file = '../dataset/test.txt'
 infer_dir = './vis'
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
@@ -39,6 +39,12 @@ def main(_):
 		for i in xrange(n):
 			# im = imread(im_paths[i], mode='RGB') / 255.
 			im = np.genfromtxt(im_paths[i], delimiter=",")
+			maxV = max(im)
+			minV = min(im)
+			diffV = (maxV - minV) * 1.0
+			for v in range(len(im)):
+				im[v] = (im[v] - minV) / diffV
+
 			gt = imread(gt_paths[i], mode='RGB') / 255.
 
 			pred = model.inference(im, sess)

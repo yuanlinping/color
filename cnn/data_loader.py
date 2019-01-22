@@ -13,10 +13,15 @@ import time
 import random
 
 train_file = '../dataset/train.txt'
-test_file = '../dataset/test.txt'
+
 
 image_height = 128
 image_width = 256
+image_channel = 1
+
+label_height = 40
+label_width = 1024
+label_channel = 3
 
 
 def get_file_paths (batch_size, file=train_file):
@@ -33,22 +38,27 @@ def get_file_paths (batch_size, file=train_file):
 
 
 def image_data_loader(start_index, batch_size, file_paths):
-    images = np.zeros((batch_size, image_height, image_width, 1), dtype=np.float32)
+    images = np.zeros((batch_size, image_height, image_width, image_channel), dtype=np.float32)
     for i in range(batch_size):
         file_path = file_paths[i + start_index]
         feature = np.genfromtxt(file_path, delimiter=",")
-        feature = feature.reshape(image_height, image_width, 1)
+        maxV = max(feature)
+        minV = min(feature)
+        diffV = (maxV - minV) * 1.0
+        for v in range(len(feature)):
+            feature[v] = (feature[v] - minV) / diffV
+        feature = feature.reshape(image_height, image_width, image_channel)
         images[i] = feature
     # print images.shape
     return images
 
 
 def label_data_loader(start_index, batch_size, file_paths):
-    labels = np.zeros((batch_size, 40, 1024, 3), dtype=np.float32)
+    labels = np.zeros((batch_size, label_height, label_width, label_channel), dtype=np.float32)
     for i in range(batch_size):
         file_path = file_paths[i + start_index]
         lab = imread(file_path, mode='RGB') / 255.
-        label = np.reshape(lab, (40, 1024, 3))
+        label = np.reshape(lab, (label_height, label_width, label_channel))
         labels[i] = label
     # print labels.shape
     return labels
