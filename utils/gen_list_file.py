@@ -19,7 +19,7 @@ random.shuffle(index_array)
 range_1 = 864
 # range_1 = 648
 range_2 = num_sample - range_1
-start_point = 5761
+start_point = 961
 
 train = open('../dataset/train.txt', 'w')
 for i in range(range_1):

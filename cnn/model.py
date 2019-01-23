@@ -21,11 +21,10 @@ class Model(object):
 		self.images = tf.placeholder(shape=[batch_size, image_height, image_width, image_channel], dtype=tf.float32)
 		self.labels = tf.placeholder(shape=[batch_size, label_height, label_width, label_channel], dtype=tf.float32)
 
-
-		# initial network 
+		# initial network
 		logits, _ = cnn(self.images)
 
-		# compute loss 
+		# compute loss
 		self.loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=self.labels, name='bce')) # normal bce loss
 
 		# create train op
@@ -34,12 +33,30 @@ class Model(object):
 		# collect summaries
 		tf.summary.histogram('input', self.images)
 		tf.summary.image('label', self.labels)
-		tf.summary.image('predict', tf.nn.sigmoid(logits)) 	
-		tf.summary.scalar('bce', self.loss)		
+		tf.summary.image('predict', tf.nn.sigmoid(logits))
+		tf.summary.scalar('bce', self.loss)
 
 		return {"image_paths": file_paths["image_paths"], "label_paths": file_paths["label_paths"], "num_batch": file_paths['num_batch']}
 
-	def train(self, max_step=20000):
+		#### debug:
+		# # initial network
+		# self.logits, _ = cnn(self.images)
+		#
+		# # compute loss
+		# self.loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.logits, labels=self.labels, name='bce')) # normal bce loss
+		#
+		# # create train op
+		# self.optim = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(self.loss, colocate_gradients_with_ops=True) # gradient ops assign to same device as forward ops
+		#
+		# # collect summaries
+		# tf.summary.histogram('input', self.images)
+		# tf.summary.image('label', self.labels)
+		# tf.summary.image('predict', tf.nn.sigmoid(self.logits))
+		# tf.summary.scalar('bce', self.loss)
+		#
+		# return {"image_paths": file_paths["image_paths"], "label_paths": file_paths["label_paths"], "num_batch": file_paths['num_batch']}
+
+	def train(self, max_step=10000):
 		# build train graph
 		results = self.build_train_graph()
 		image_paths = results["image_paths"]
@@ -84,7 +101,13 @@ class Model(object):
 					labels = label_data_loader(n * batch_size, batch_size, label_paths)
 					# print images
 					# print labels
+
 					[loss_value, update_value, summaries] = sess.run([self.loss, self.optim, merged], feed_dict={self.images: images, self.labels: labels})
+					## debug:
+					# [print_logits, loss_value, update_value, summaries] = sess.run([tf.nn.sigmoid(self.logits), self.loss, self.optim, merged], feed_dict={self.images: images, self.labels: labels})
+					# print print_logits
+					# print "label:"
+					# print labels
 					duration = time.time()-tic
 
 					total_times += duration
