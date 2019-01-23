@@ -65,7 +65,7 @@ class Model(object):
 
 			# filewriter for log info
 			log_dir = self.logdir+'/run-%02d%02d-%02d%02d' % tuple(time.localtime(time.time()))[1:5]
-			writer = tf.summary.FileWriter(log_dir)
+			writer = tf.summary.FileWriter(log_dir, tf.get_default_graph())
 			merged = tf.summary.merge_all()
 
 			# coordinator for queue runner

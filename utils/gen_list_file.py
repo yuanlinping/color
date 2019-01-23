@@ -9,16 +9,17 @@ from scipy.misc import imread
 import random
 
 # train file
-data_dir = '../dataset/chartHis_32/'
+data_dir = '../dataset/chartHis/'
 label_dir = '../dataset/legend/'
 
-num_sample = 320
+num_sample = 960
 index_array = range(num_sample)
 
 random.shuffle(index_array)
-range_1 = 300
+range_1 = 864
+# range_1 = 648
 range_2 = num_sample - range_1
-start_point = 1
+start_point = 5761
 
 train = open('../dataset/train.txt', 'w')
 for i in range(range_1):
