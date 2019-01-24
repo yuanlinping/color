@@ -4,10 +4,13 @@ import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
-test_file = '../dataset/test.txt'
-infer_dir = './vis'
+# test_file = '../dataset/test.txt'
+# infer_dir = './vis'
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+test_file = '../dataset/test_1.txt'
+infer_dir = './vis_1'
+
+os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # ignore warning messages from tf package
 
@@ -39,6 +42,8 @@ def main(_):
 		for i in xrange(n):
 			# im = imread(im_paths[i], mode='RGB') / 255.
 			im = np.genfromtxt(im_paths[i], delimiter=",")
+			im[0] = 0.0
+			im[-1] = 0.0
 			maxV = max(im)
 			minV = min(im)
 			diffV = (maxV - minV) * 1.0

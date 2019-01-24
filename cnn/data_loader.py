@@ -42,6 +42,9 @@ def image_data_loader(start_index, batch_size, file_paths):
     for i in range(batch_size):
         file_path = file_paths[i + start_index]
         feature = np.genfromtxt(file_path, delimiter=",")
+        # #for line / scatterplot
+        feature[0] = 0.0
+        feature[-1] = 0.0
         maxV = max(feature)
         minV = min(feature)
         diffV = (maxV - minV) * 1.0
