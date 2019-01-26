@@ -6,6 +6,7 @@ seed = 8964
 tf.set_random_seed(seed)
 
 batch_size = 1
+L2_lambda = 6
 
 class Model(object):
 	"""docstring for Baseline"""
@@ -25,16 +26,22 @@ class Model(object):
 		logits, _ = cnn(self.images)
 
 		# compute loss
-		self.loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=self.labels, name='bce')) # normal bce loss
+		self.ce_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=self.labels, name='bce')) # normal bce loss
+		self.l2_loss = L2_lambda * tf.reduce_mean(tf.square(tf.nn.sigmoid(logits) - self.labels))
+		self.loss = self.ce_loss + self.l2_loss
+		# regularization_loss = tf.add_n(tf.losses.get_regularization_losses())
+		# self.loss = loss + regularization_loss
 
 		# create train op
-		self.optim = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(self.loss, colocate_gradients_with_ops=True) # gradient ops assign to same device as forward ops
+		self.optim = tf.train.AdamOptimizer(learning_rate=1e-5).minimize(self.loss, colocate_gradients_with_ops=True) # gradient ops assign to same device as forward ops
 
 		# collect summaries
 		tf.summary.histogram('input', self.images)
 		tf.summary.image('label', self.labels)
 		tf.summary.image('predict', tf.nn.sigmoid(logits))
-		tf.summary.scalar('bce', self.loss)
+		tf.summary.scalar('bce', self.ce_loss)
+		tf.summary.scalar('l2_loss', self.l2_loss)
+		tf.summary.scalar('sum', self.loss)
 
 		return {"image_paths": file_paths["image_paths"], "label_paths": file_paths["label_paths"], "num_batch": file_paths['num_batch']}
 
@@ -56,7 +63,7 @@ class Model(object):
 		#
 		# return {"image_paths": file_paths["image_paths"], "label_paths": file_paths["label_paths"], "num_batch": file_paths['num_batch']}
 
-	def train(self, max_step=10000):
+	def train(self, max_step=40000):
 		# build train graph
 		results = self.build_train_graph()
 		image_paths = results["image_paths"]

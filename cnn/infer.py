@@ -4,11 +4,11 @@ import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
-# test_file = '../dataset/test.txt'
-# infer_dir = './vis'
+test_file = '../dataset/test.txt'
+infer_dir = './vis'
 
-test_file = '../dataset/test_1.txt'
-infer_dir = './vis_1'
+# test_file = '../dataset/test_1.txt'
+# infer_dir = './vis_1'
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 

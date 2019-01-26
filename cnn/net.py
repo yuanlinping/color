@@ -38,7 +38,7 @@ def cnn(inputs):
 
 # # unit test of the tensor shape at each layer
 # if __name__ == '__main__':
-# 	logits, end_points = cnn(tf.placeholder(shape=[1, 128, 256, 3], dtype=tf.float32))
+# 	logits, end_points = cnn(tf.placeholder(shape=[1, 256, 128, 3], dtype=tf.float32))
 #
 # 	keys = end_points.keys()
 # 	for k in keys:
