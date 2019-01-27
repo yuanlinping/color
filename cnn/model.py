@@ -6,7 +6,7 @@ seed = 8964
 tf.set_random_seed(seed)
 
 batch_size = 1
-L2_lambda = 6
+L2_lambda = 20
 
 class Model(object):
 	"""docstring for Baseline"""
