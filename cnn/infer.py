@@ -71,13 +71,13 @@ def main(_):
 		for i in xrange(n):
 			# im = imread(im_paths[i], mode='RGB') / 255.
 			im = np.genfromtxt(im_paths[i], delimiter=",")
-			im[0] = 0.0
-			im[-1] = 0.0
-			maxV = max(im)
-			minV = min(im)
-			diffV = (maxV - minV) * 1.0
-			for v in range(len(im)):
-				im[v] = (im[v] - minV) / diffV
+			# im[0] = 0.0
+			# im[-1] = 0.0
+			# maxV = max(im)
+			# minV = min(im)
+			# diffV = (maxV - minV) * 1.0
+			# for v in range(len(im)):
+			# 	im[v] = (im[v] - minV) / diffV
 
 			gt = imread(gt_paths[i], mode='RGB') / 255.
 

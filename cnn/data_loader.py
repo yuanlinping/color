@@ -43,15 +43,17 @@ def image_data_loader(start_index, batch_size, file_paths):
         file_path = file_paths[i + start_index]
         feature = np.genfromtxt(file_path, delimiter=",")
         # #for line / scatterplot
-        feature[0] = 0.0
-        feature[-1] = 0.0
-        maxV = max(feature)
-        minV = min(feature)
-        diffV = (maxV - minV) * 1.0
-        for v in range(len(feature)):
-            feature[v] = (feature[v] - minV) / diffV
+        # feature[0] = 0.0
+        # feature[-1] = 0.0
+        # maxV = max(feature)
+        # minV = min(feature)
+        # diffV = (maxV - minV) * 1.0
+        # for v in range(len(feature)):
+        #     feature[v] = (feature[v] - minV) / diffV
         feature = feature.reshape(image_height, image_width, image_channel)
         images[i] = feature
+    mu = np.mean(images, axis=(0, 1, 2))
+    images = images - mu.reshape(1, 1, 1, image_channel)
     # print images.shape
     return images
 
