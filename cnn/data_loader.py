@@ -19,8 +19,8 @@ image_height = 128
 image_width = 256
 image_channel = 1
 
-label_height = 40
-label_width = 1024
+label_height = 5
+label_width = 60
 label_channel = 3
 
 

@@ -5,7 +5,7 @@ from net import *
 seed = 8964
 tf.set_random_seed(seed)
 
-batch_size = 1
+batch_size = 32
 L2_lambda = 20
 
 class Model(object):
@@ -33,7 +33,10 @@ class Model(object):
 		# self.loss = loss + regularization_loss
 
 		# create train op
-		self.optim = tf.train.AdamOptimizer(learning_rate=1e-5).minimize(self.loss, colocate_gradients_with_ops=True) # gradient ops assign to same device as forward ops
+		update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+		with tf.control_dependencies(control_inputs=update_ops):
+			self.optim = tf.train.AdamOptimizer(learning_rate=1e-5).minimize(self.loss,
+																			 colocate_gradients_with_ops=True)  # gradient ops assign to same device as forward ops
 
 		# collect summaries
 		tf.summary.histogram('input', self.images)
@@ -140,12 +143,13 @@ class Model(object):
 		Use both inference and offline evaluation
 		"""
 		self.x = tf.placeholder(shape=shape, dtype=tf.float32)
-		logits, _ = cnn(self.x)
+		self.is_training = tf.placeholder(tf.bool)
+		logits, _ = cnn(self.x,self.is_training)
 		self.infer = tf.nn.sigmoid(logits)
 
 	def inference(self, image, sess):
 		im = np.reshape(image, (1, image_height, image_width, image_channel))
 		mu = np.mean(im, axis=(0, 1, 2))
 		im = im - mu.reshape(1, 1, 1, image_channel)
-		pred = sess.run([self.infer], feed_dict={self.x:im})
+		pred = sess.run([self.infer], feed_dict={self.x: im, self.is_training: False})
 		return np.squeeze(pred)

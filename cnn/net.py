@@ -37,11 +37,14 @@ def atrous_spatial_pyramid_pooling(inputs, output_stride=16, depth=256):
 
 		return net
 
-def cnn(inputs, is_training=None):
+
+def cnn(inputs, is_training=True):
 	with tf.variable_scope('feature_net') as sc:						  # design the nn architecture for the depth network
 		end_points_collection = sc.original_name_scope + '_end_points'
+		batch_norm_params = {'is_training': is_training, 'decay': 0.9, 'updates_collections': None}
 		with slim.arg_scope([slim.conv2d, slim.conv2d_transpose],	   #define a conv2d operator with fixed params shown below
-							normalizer_fn=None,
+							normalizer_fn=slim.batch_norm,
+							normalizer_params=batch_norm_params,
 							weights_regularizer=slim.l2_regularizer(0.05), # using l2 regularizer with 0.05 weight
 							activation_fn=tf.nn.relu,
 							outputs_collections=end_points_collection):
@@ -66,7 +69,7 @@ def cnn(inputs, is_training=None):
 				legend_pred = slim.conv2d(cnv6b, 3, [1, 1], stride=1, scope='pred',
 					normalizer_fn=None, activation_fn=None)
 
-				legend_pred_resize = tf.image.resize_images(legend_pred, [40, 1024])
+				legend_pred_resize = tf.image.resize_images(legend_pred, [5, 60])
 
 			end_points = utils.convert_collection_to_dict(end_points_collection)
 			return legend_pred_resize, end_points
