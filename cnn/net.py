@@ -66,15 +66,15 @@ def cnn(inputs, is_training=None):
 				legend_pred = slim.conv2d(cnv6b, 3, [1, 1], stride=1, scope='pred',
 					normalizer_fn=None, activation_fn=None)
 
-				legend_pred_resize = tf.image.resize_images(legend_pred, [40, 1024])
+				legend_pred_resize = tf.image.resize_images(legend_pred, [10, 256])
 
 			end_points = utils.convert_collection_to_dict(end_points_collection)
 			return legend_pred_resize, end_points
 
 # unit test of the tensor shape at each layer
 # if __name__ == '__main__':
-# 	logits, end_points = cnn(tf.placeholder(shape=[1,512,1024,3], dtype=tf.float32))
-
+# 	logits, end_points = cnn(tf.placeholder(shape=[1,200,360,3], dtype=tf.float32))
+#
 # 	keys = end_points.keys()
 # 	for k in keys:
 # 		print 'tensor name = {}, shape = {}'.format(k, end_points[k].shape)

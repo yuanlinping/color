@@ -9,31 +9,33 @@ from scipy.misc import imread
 import random
 
 # train file
-data_dir = '../dataset/chartHis/'
+hs_data_dir = '../dataset/hsHis/'
+hl_data_dir = '../dataset/hlHis/'
 label_dir = '../dataset/legend/'
 
-num_sample = 960
+num_sample = 3840
 index_array = range(num_sample)
 
 random.shuffle(index_array)
-range_1 = 864
-# range_1 = 648
+range_1 = 3840 - 384
 range_2 = num_sample - range_1
-start_point = 4801
+start_point = 1
 
 train = open('../dataset/train.txt', 'w')
 for i in range(range_1):
 	index = index_array[i] + start_point
-	im_paths = data_dir+"C" + str(index) + ".csv"
-	gt_paths = label_dir+"L" + str(index) + ".png"
-	print>> train, '{}\t{}'.format(im_paths, gt_paths)
+	hs_paths = hs_data_dir + "HS" + str(index) + ".csv"
+	hl_paths = hl_data_dir + "HL" + str(index) + ".csv"
+	gt_paths = label_dir + "L" + str(index) + ".png"
+	print>> train, '{}\t{}\t{}'.format(hs_paths, hl_paths, gt_paths)
 train.close()
 
 test = open('../dataset/test.txt', 'w')
 for i in range(range_2):
 	index = index_array[i+range_1] + start_point
-	im_paths = data_dir+"C" + str(index) + ".csv"
+	hs_paths = hs_data_dir + "HS" + str(index) + ".csv"
+	hl_paths = hl_data_dir + "HL" + str(index) + ".csv"
 	gt_paths = label_dir+"L" + str(index) + ".png"
-	print>> test, '{}\t{}'.format(im_paths, gt_paths)
+	print>> test, '{}\t{}\t{}'.format(hs_paths, hl_paths, gt_paths)
 test.close()
 

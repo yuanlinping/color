@@ -56,9 +56,10 @@ def main(_):
 
 		# create input image paths
 		paths = open(test_file, 'r').read().splitlines()
-		im_paths = [p.split('\t')[0] for p in paths] # image 
-		gt_paths = [p.split('\t')[1] for p in paths] # gt
- 		save_paths = [p.split('/')[-1] for p in im_paths]
+		hs_paths = [p.split('\t')[0] for p in paths] # image
+		hl_paths = [p.split('\t')[1] for p in paths]
+		gt_paths = [p.split('\t')[2] for p in paths] # gt
+ 		save_paths = [p.split('/')[-1] for p in hs_paths]
 		vis_paths = [os.path.join(infer_dir, p.split('.png')[0]+'_legend_pred.png') for p in save_paths]
 		paths_ID = [p.split('.png')[0] for p in save_paths]
 
@@ -67,10 +68,11 @@ def main(_):
 		accuracy_array = []
 
 		# infer loop
-		n = len(im_paths)
+		n = len(hs_paths)
 		for i in xrange(n):
 			# im = imread(im_paths[i], mode='RGB') / 255.
-			im = np.genfromtxt(im_paths[i], delimiter=",")
+			hs = np.genfromtxt(hs_paths[i], delimiter=",")
+			hl = np.genfromtxt(hl_paths[i], delimiter=",")
 			# im[0] = 0.0
 			# im[-1] = 0.0
 			# maxV = max(im)
@@ -81,7 +83,7 @@ def main(_):
 
 			gt = imread(gt_paths[i], mode='RGB') / 255.
 
-			pred = model.inference(im, sess)
+			pred = model.inference(hs,hl, sess)
 
 			accuracy = calculate_accuracy(gt, pred)
 			accuracy_array.append(accuracy)
