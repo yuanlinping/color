@@ -64,7 +64,7 @@ class Model(object):
         #
         # return {"image_paths": file_paths["image_paths"], "label_paths": file_paths["label_paths"], "num_batch": file_paths['num_batch']}
 
-    def train(self, max_step=20000):
+    def train(self, max_step=10000):
         # build train graph
         results = self.build_train_graph()
         hs_paths = results["hs_paths"]
@@ -147,8 +147,8 @@ class Model(object):
         self.infer = tf.nn.sigmoid(logits)
 
     def inference(self, hs, hl, sess):
-        hs = normalization(hs)
-        hl = normalization(hl)
+        hs = normalization_2(hs)
+        hl = normalization_2(hl)
         hs = np.reshape(hs,(image_height / 2, image_width))
         hl = np.reshape(hl, (image_height / 2, image_width))
         im = np.concatenate((hs, hl))
@@ -158,12 +158,18 @@ class Model(object):
         pred = sess.run([self.infer], feed_dict={self.x:im})
         return np.squeeze(pred)
 
-    def normalization(feature):
-        maxV = max(feature.all())
-        minV = min(feature.all())
-        diffV = (maxV - minV) * 1.0
-        if (diffV == 0.0):
-            return feature
+    # def normalization(feature):
+    #     maxV = max(feature.all())
+    #     minV = min(feature.all())
+    #     diffV = (maxV - minV) * 1.0
+    #     if (diffV == 0.0):
+    #         return feature
+    #     for v in range(len(feature)):
+    #         feature[v] = (feature[v] - minV) / diffV
+    #     return feature
+
+    def normalization_2(feature):
+        maxV = max(feature)
         for v in range(len(feature)):
-            feature[v] = (feature[v] - minV) / diffV
+            feature[v] = feature[v] / maxV
         return feature

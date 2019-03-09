@@ -2,7 +2,7 @@ from model import *
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # ignore warning messages from tf package
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5' # ignore warning messages from tf package
 
 def main(_):
 	seed = 8964
