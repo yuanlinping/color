@@ -73,8 +73,8 @@ def image_data_loader(start_index, batch_size, hs_file_paths, hl_file_paths):
 
         #feature = feature.reshape(image_height, image_width, image_channel)
         #images[i] = feature
-    #mu = np.mean(images, axis=(0, 1, 2))
-    #images = images - mu.reshape(1, 1, 1, image_channel)
+    mu = np.mean(images, axis=(0, 1, 2))
+    images = images - mu.reshape(1, 1, 1, image_channel)
     return images
 
 

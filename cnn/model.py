@@ -64,7 +64,7 @@ class Model(object):
         #
         # return {"image_paths": file_paths["image_paths"], "label_paths": file_paths["label_paths"], "num_batch": file_paths['num_batch']}
 
-    def train(self, max_step=10000):
+    def train(self, max_step=20000):
         # build train graph
         results = self.build_train_graph()
         hs_paths = results["hs_paths"]
@@ -153,8 +153,8 @@ class Model(object):
         hl = np.reshape(hl, (image_height / 2, image_width))
         im = np.concatenate((hs, hl))
         im = np.reshape(im, (1, image_height, image_width, image_channel))
-        # mu = np.mean(im, axis=(0, 1, 2))
-        # im = im - mu.reshape(1, 1, 1, image_channel)
+        mu = np.mean(im, axis=(0, 1, 2))
+        im = im - mu.reshape(1, 1, 1, image_channel)
         pred = sess.run([self.infer], feed_dict={self.x:im})
         return np.squeeze(pred)
 
