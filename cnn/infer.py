@@ -11,7 +11,7 @@ infer_dir = './vis'
 # test_file = '../dataset/test_1.txt'
 # infer_dir = './vis_1'
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '3'
+os.environ['CUDA_VISIBLE_DEVICES'] = '7'
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2' # ignore warning messages from tf package
 
