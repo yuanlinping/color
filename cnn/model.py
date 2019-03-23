@@ -64,7 +64,7 @@ class Model(object):
         #
         # return {"image_paths": file_paths["image_paths"], "label_paths": file_paths["label_paths"], "num_batch": file_paths['num_batch']}
 
-    def train(self, max_step=150000):
+    def train(self, max_step=80000):
         # build train graph
         results = self.build_train_graph()
         hs_paths = results["hs_paths"]
@@ -147,8 +147,8 @@ class Model(object):
         self.infer = tf.nn.sigmoid(logits)
 
     def inference(self, hs, hl, sess):
-        #hs = normalization_2(hs)
-        #hl = normalization_2(hl)
+        hs = normalization_2(hs)
+        hl = normalization_2(hl)
         hs = np.reshape(hs,(image_height / 2, image_width))
         hl = np.reshape(hl, (image_height / 2, image_width))
         im = np.concatenate((hs, hl))
@@ -170,6 +170,8 @@ class Model(object):
 
     def normalization_2(feature):
         maxV = max(feature)
+        if maxV == 0:
+            return feature
         for v in range(len(feature)):
-            feature[v] = feature[v] / maxV
+            feature[v] = feature[v] / maxV * 1000
         return feature

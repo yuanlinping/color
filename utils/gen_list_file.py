@@ -17,7 +17,7 @@ num_sample = 29040
 index_array = range(num_sample)
 
 random.shuffle(index_array)
-range_1 = 29040 - 2904
+range_1 = 29040 - 2940
 range_2 = num_sample - range_1
 start_point = 1
 #gray_start = 1440 + start_point

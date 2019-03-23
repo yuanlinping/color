@@ -5,11 +5,11 @@ import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
-# test_file = '../dataset/test.txt'
-# infer_dir = './vis_gt'
+test_file = '../dataset/test.txt'
+infer_dir = './vis'
 
-test_file = '../dataset/test_1.txt'
-infer_dir = './vis_true'
+# test_file = '../dataset/test_1.txt'
+# infer_dir = './vis_map'
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '4'
 
@@ -58,7 +58,7 @@ def main(_):
 		paths = open(test_file, 'r').read().splitlines()
 		hs_paths = [p.split('\t')[0] for p in paths] # image
 		hl_paths = [p.split('\t')[1] for p in paths]
-		# gt_paths = [p.split('\t')[2] for p in paths] # gt
+		gt_paths = [p.split('\t')[2] for p in paths] # gt
  		save_paths = [p.split('/')[-1] for p in hs_paths]
 		vis_paths = [os.path.join(infer_dir, p.split('.png')[0]+'_legend_pred.png') for p in save_paths]
 		paths_ID = [p.split('.png')[0] for p in save_paths]
@@ -69,42 +69,36 @@ def main(_):
 
 		# infer loop
 		n = len(hs_paths)
+		# n = 500
 		for i in xrange(n):
 			# im = imread(im_paths[i], mode='RGB') / 255.
 			hs = np.genfromtxt(hs_paths[i], delimiter=",")
 			hl = np.genfromtxt(hl_paths[i], delimiter=",")
-			# im[0] = 0.0
-			# im[-1] = 0.0
-			# maxV = max(im)
-			# minV = min(im)
-			# diffV = (maxV - minV) * 1.0
-			# for v in range(len(im)):
-			# 	im[v] = (im[v] - minV) / diffV
 
-			# gt = imread(gt_paths[i], mode='RGB') / 255.
+			gt = imread(gt_paths[i], mode='RGB') / 255.
 
-			pred = model.inference(hs,hl, sess)
+			pred = model.inference(hs, hl, sess)
 
 			# accuracy = calculate_accuracy(gt, pred)
 			# accuracy_array.append(accuracy)
 
 
 			# both
-			# plt.clf()
-			# plt.subplot(211)
-			# plt.imshow(pred)
-			# plt.axis('off')
-			# plt.title('predict')
-			# plt.subplot(212)
-			# plt.imshow(gt)
-			# plt.axis('off')
-			# plt.title('ground truth')
-
-			# prediction
 			plt.clf()
-			plt.figure()
+			plt.subplot(211)
 			plt.imshow(pred)
 			plt.axis('off')
+			plt.title('predict')
+			plt.subplot(212)
+			plt.imshow(gt)
+			plt.axis('off')
+			plt.title('ground truth')
+
+			# prediction
+			# plt.clf()
+			# plt.figure()
+			# plt.imshow(pred)
+			# plt.axis('off')
 
 			# #ground truth
 			# plt.clf()

@@ -51,8 +51,10 @@ def normalization(feature):
 
 def normalization_2(feature):
     maxV = max(feature)
+    if maxV == 0:
+        return feature
     for v in range(len(feature)):
-        feature[v] = feature[v] / maxV
+        feature[v] = feature[v] / maxV * 1000
     return feature
 
 
@@ -63,8 +65,8 @@ def image_data_loader(start_index, batch_size, hs_file_paths, hl_file_paths):
         hl_file_path = hl_file_paths[i + start_index]
         hs_feature = np.genfromtxt(hs_file_path, delimiter=",")
         hl_feature = np.genfromtxt(hl_file_path, delimiter=",")
-        #hs_feature = normalization_2(hs_feature)
-        #hl_feature = normalization_2(hl_feature)
+        hs_feature = normalization_2(hs_feature)
+        hl_feature = normalization_2(hl_feature)
         hs_feature = hs_feature.reshape(image_height / 2, image_width)
         hl_feature = hl_feature.reshape(image_height / 2, image_width)
         feature = np.concatenate((hs_feature, hl_feature))

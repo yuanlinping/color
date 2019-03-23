@@ -12,8 +12,8 @@ import random
 hs_dir = '../dataset/test_hsHis/'
 hl_dir = '../dataset/test_hlHis/'
 
-num_sample = 68
-start_point = 1
+num_sample = 7
+start_point = 32424
 
 test = open('../dataset/test_1.txt', 'w')
 for i in range(num_sample):
